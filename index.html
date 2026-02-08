@@ -1,0 +1,2437 @@
+﻿<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Ristorante</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fa;
+            color: #2d3748;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 1.25rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .header-content {
+            max-width: 1600px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1a202c;
+        }
+
+        .header-date {
+            color: #718096;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* Navigation */
+        .nav-tabs {
+            background: white;
+            border-bottom: 2px solid #e2e8f0;
+            padding: 0 2rem;
+            overflow-x: auto;
+        }
+
+        .nav-tabs-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .nav-tab {
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #718096;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .nav-tab:hover {
+            color: #4299e1;
+            background: #f7fafc;
+        }
+
+        .nav-tab.active {
+            color: #4299e1;
+            border-bottom-color: #4299e1;
+            background: #f7fafc;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            border: 1px solid #e2e8f0;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f7fafc;
+        }
+
+        .section-title .actions {
+            margin-left: auto;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background: #4299e1;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #3182ce;
+        }
+
+        .btn-success {
+            background: #48bb78;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #38a169;
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e0;
+        }
+
+        .btn-secondary.active {
+            background: #4299e1;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #fc8181;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #f56565;
+        }
+
+        /* Stats */
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.75rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
+        }
+
+        .stat-card.active {
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+            transform: translateY(-2px) scale(1.02);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.95;
+            font-weight: 500;
+        }
+
+        /* Orders */
+        .orders-grid {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .order-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-left: 4px solid #4299e1;
+            border-radius: 8px;
+            padding: 1.25rem;
+            transition: all 0.2s;
+        }
+
+        .order-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transform: translateX(4px);
+        }
+
+        /* Weekly Table */
+        .weekly-table {
+            overflow-x: auto;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            background: white;
+        }
+
+        .table-grid {
+            display: grid;
+            grid-template-columns: 140px repeat(5, 1fr);
+            min-width: 900px;
+        }
+
+        .table-header {
+            background: #f8fafc;
+            border-bottom: 2px solid #cbd5e0;
+        }
+
+        .header-cell {
+            padding: 1rem 0.75rem;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: #4a5568;
+            border-right: 1px solid #e2e8f0;
+            text-align: center;
+        }
+
+        .header-cell:last-child {
+            border-right: none;
+        }
+
+        .header-cell small {
+            display: block;
+            font-size: 0.75rem;
+            color: #718096;
+            font-weight: 500;
+            margin-top: 0.25rem;
+        }
+
+        .table-row {
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .category-cell {
+            padding: 1rem 0.75rem;
+            font-weight: 700;
+            font-size: 0.85rem;
+            background: #f8fafc;
+            color: #4a5568;
+            border-right: 1px solid #e2e8f0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .day-cell {
+            padding: 0.75rem;
+            border-right: 1px solid #e2e8f0;
+            min-height: 100px;
+            background: #fefefe;
+        }
+
+        .day-cell:last-child {
+            border-right: none;
+        }
+
+        .dish-mini {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-left: 3px solid #4299e1;
+            padding: 0.625rem;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .dish-mini-name {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 0.25rem;
+        }
+
+        .dish-mini-price {
+            font-size: 0.75rem;
+            color: #48bb78;
+            font-weight: 700;
+        }
+
+        /* Products Grid */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .product-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-left: 4px solid #4299e1;
+            border-radius: 8px;
+            padding: 1.25rem;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .product-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transform: translateY(-2px);
+        }
+
+        .product-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 0.75rem;
+        }
+
+        .product-name {
+            font-weight: 700;
+            color: #2d3748;
+            font-size: 1.05rem;
+        }
+
+        .product-price {
+            font-weight: 700;
+            color: #48bb78;
+            font-size: 1.1rem;
+        }
+
+        .product-desc {
+            font-size: 0.85rem;
+            color: #718096;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .product-meta {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .badge {
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .badge-warning {
+            background: #feebc8;
+            color: #744210;
+        }
+
+        .badge-secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .bg-success {
+            background: #48bb78;
+            color: white;
+        }
+
+        .bg-danger {
+            background: #fc8181;
+            color: white;
+        }
+
+        .badge-categoria {
+            background: #e6f3ff;
+            color: #2b6cb0;
+        }
+
+        .badge-giorno {
+            background: #fef3c7;
+            color: #92400e;
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+        }
+
+        .badge-giorno:hover {
+            background: #fde68a;
+        }
+
+        .badge-disponibile-si {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .badge-disponibile-no {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            overflow-y: auto;
+            padding: 2rem;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-size: 1.3rem;
+            color: #2d3748;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #718096;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+        }
+
+        .modal-close:hover {
+            background: #f7fafc;
+            color: #2d3748;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #4a5568;
+            font-size: 0.9rem;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: #4299e1;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        /* Day Swiper */
+        .day-swiper {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #fef3c7;
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .day-swiper:hover {
+            background: #fde68a;
+        }
+
+        .day-swiper-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #92400e;
+        }
+
+        .day-swiper-arrows {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .day-swiper-arrow {
+            font-size: 0.6rem;
+            color: #92400e;
+            line-height: 1;
+        }
+
+        /* Recipe Featured */
+        .recipe-featured {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2.5rem;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+        }
+
+        .recipe-featured h3 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .recipe-featured p {
+            font-size: 1.1rem;
+            margin-bottom: 1.25rem;
+            opacity: 0.95;
+            line-height: 1.6;
+        }
+
+        .recipe-featured-price {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border-left: 4px solid #48bb78;
+            transform: translateX(400px);
+            transition: transform 0.3s;
+            z-index: 1000;
+            font-weight: 600;
+            min-width: 250px;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #a0aec0;
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .spinner {
+            border: 4px solid #e2e8f0;
+            border-top: 4px solid #4299e1;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .header {
+                padding: 1rem;
+            }
+
+            .nav-tabs {
+                padding: 0 1rem;
+            }
+
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .section {
+                padding: 1rem;
+            }
+
+            .table-grid {
+                grid-template-columns: 100px repeat(5, 1fr);
+                font-size: 0.85rem;
+            }
+
+            .modal {
+                padding: 1rem;
+            }
+        }
+    
+/* Auto-refresh button states */
+#toggle-autorefresh.running { opacity: 1; }
+#toggle-autorefresh.paused { opacity: 1; filter: saturate(0.9); }
+#toggle-autorefresh.paused { background: rgba(239,68,68,0.12); border-color: rgba(239,68,68,0.35); color: #ef4444; }
+#toggle-autorefresh.running { background: rgba(16,185,129,0.12); border-color: rgba(16,185,129,0.35); color: #10b981; }
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  margin-left: 8px;
+  border: 1px solid rgba(255,255,255,0.15);
+}
+.pill-on { background: rgba(16,185,129,0.18); color: #10b981; border-color: rgba(16,185,129,0.35); }
+.pill-off { background: rgba(239,68,68,0.18); color: #ef4444; border-color: rgba(239,68,68,0.35); }
+
+</style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <div>
+                <h1>🍽️ Dashboard Ristorante</h1>
+                <div class="header-date" id="header-date">Caricamento...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav-tabs">
+        <div class="nav-tabs-container">
+            <button class="nav-tab active" onclick="switchTab('comande')">📋 Comande</button>
+            <button class="nav-tab" onclick="switchTab('menu')">📅 Menu Settimanale</button>
+            <button class="nav-tab" onclick="switchTab('prodotti')">📦 Prodotti</button>
+            <button class="nav-tab" onclick="switchTab('ricetta')">🍰 Ricetta Settimana</button>
+            <button class="nav-tab" onclick="switchTab('feedback')">⭐ Recensioni</button>
+            <button class="nav-tab" onclick="switchTab('config')">⚙️ Configurazione</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- TAB 1: COMANDE -->
+        <div id="tab-comande" class="tab-content active">
+            <div class="quick-stats">
+                <div class="stat-card active">
+                    <div class="stat-value" id="stat-all">0</div>
+                    <div class="stat-label">Ordini Oggi</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="stat-lunch">0</div>
+                    <div class="stat-label">Pranzo</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="stat-dinner">0</div>
+                    <div class="stat-label">Cena</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="stat-tomorrow">0</div>
+                    <div class="stat-label">Domani</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">
+                    📋 Ordini Attivi
+                    <div class="actions">
+                        <button class="btn btn-secondary" onclick="refreshOrders()">🔄 Aggiorna</button>
+                        <button class="btn btn-primary" onclick="printOrders()">🖨️ Stampa</button>
+                    </div>
+                </div>
+                
+                <!-- ✅ FILTRI TEMPORALI -->
+                <div style="display:flex; justify-content:space-between; gap:1rem; margin-bottom:1rem; flex-wrap:wrap; align-items:center;">
+  <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+    <button class="btn btn-success" id="filter-oggi" onclick="filterOrdersBy('oggi')">🟢 Oggi</button>
+    <button class="btn btn-secondary" id="filter-tutti" onclick="filterOrdersBy('tutti')">📋 Tutti</button>
+  </div>
+
+  <div style="display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center;">
+    <span style="font-size:0.9rem; opacity:0.8;">Vista:</span>
+    <button class="btn btn-primary" id="view-active" onclick="setOrdersView('active')">Attivi</button>
+    <button class="btn btn-secondary" id="view-archived" onclick="setOrdersView('archived')">Archiviati</button>
+  </div>
+</div>
+
+<!-- Auto Refresh Toggle -->
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:0.75rem;">
+  <div style="display:flex; align-items:center; gap:0.5rem; color:#4b5563;">
+    <span>🔄 Auto-refresh:</span>
+    <span id="autorefresh-status" style="font-weight:700;">ON</span>
+  </div>
+  <button class="btn btn-danger" id="toggle-autorefresh" onclick="toggleAutoRefresh()" style="min-width: 210px;">
+    ⏸ Pausa auto refresh
+  </button>
+</div>
+        </div>
+          <!-- LISTA ORDINI (cards) -->
+          <div id="ordersContainer" class="orders-grid" style="margin-top: 14px;"></div>
+          <div id="ordersEmpty" class="empty-state" style="display:none; padding: 28px 12px; text-align:center; color:#6b7280;">
+            Nessun ordine attivo con questi filtri.
+          </div>
+
+        </div>
+
+        <!-- TAB 2: MENU SETTIMANALE -->
+        <div id="tab-menu" class="tab-content">
+            <div class="section">
+                <div class="section-title">📅 Pianificazione Settimanale</div>
+                
+                <div class="weekly-table">
+                    <div class="table-grid">
+                        <div class="table-header" style="display: contents;">
+                            <div class="header-cell">CATEGORIA</div>
+                            <div class="header-cell">LUNEDÌ<br><small id="date-lun">--/--</small></div>
+                            <div class="header-cell">MARTEDÌ<br><small id="date-mar">--/--</small></div>
+                            <div class="header-cell">MERCOLEDÌ<br><small id="date-mer">--/--</small></div>
+                            <div class="header-cell">GIOVEDÌ<br><small id="date-gio">--/--</small></div>
+                            <div class="header-cell">VENERDÌ<br><small id="date-ven">--/--</small></div>
+                        </div>
+
+                        <div class="table-row" style="display: contents;">
+                            <div class="category-cell">Antipasti</div>
+                            <div class="day-cell" id="anti-lun"></div>
+                            <div class="day-cell" id="anti-mar"></div>
+                            <div class="day-cell" id="anti-mer"></div>
+                            <div class="day-cell" id="anti-gio"></div>
+                            <div class="day-cell" id="anti-ven"></div>
+                        </div>
+
+                        <div class="table-row" style="display: contents;">
+                            <div class="category-cell">Primi</div>
+                            <div class="day-cell" id="prim-lun"></div>
+                            <div class="day-cell" id="prim-mar"></div>
+                            <div class="day-cell" id="prim-mer"></div>
+                            <div class="day-cell" id="prim-gio"></div>
+                            <div class="day-cell" id="prim-ven"></div>
+                        </div>
+
+                        <div class="table-row" style="display: contents;">
+                            <div class="category-cell">Secondi</div>
+                            <div class="day-cell" id="seco-lun"></div>
+                            <div class="day-cell" id="seco-mar"></div>
+                            <div class="day-cell" id="seco-mer"></div>
+                            <div class="day-cell" id="seco-gio"></div>
+                            <div class="day-cell" id="seco-ven"></div>
+                        </div>
+
+                        <div class="table-row" style="display: contents;">
+                            <div class="category-cell">Contorni</div>
+                            <div class="day-cell" id="cont-lun"></div>
+                            <div class="day-cell" id="cont-mar"></div>
+                            <div class="day-cell" id="cont-mer"></div>
+                            <div class="day-cell" id="cont-gio"></div>
+                            <div class="day-cell" id="cont-ven"></div>
+                        </div>
+
+                        <div class="table-row" style="display: contents;">
+                            <div class="category-cell">Dolci</div>
+                            <div class="day-cell" id="dolc-lun"></div>
+                            <div class="day-cell" id="dolc-mar"></div>
+                            <div class="day-cell" id="dolc-mer"></div>
+                            <div class="day-cell" id="dolc-gio"></div>
+                            <div class="day-cell" id="dolc-ven"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 1.5rem; padding: 1rem; background: #f7fafc; border-radius: 8px; text-align: center; color: #718096;">
+                    💡 <strong>Suggerimento:</strong> Vai su "Prodotti" per modificare il giorno di ogni piatto con swipe touch
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: PRODOTTI -->
+        <div id="tab-prodotti" class="tab-content">
+            <div class="section">
+                <div class="section-title">
+                    📦 Gestione Prodotti
+                    <div class="actions">
+                        <button class="btn btn-success" onclick="openAddProduct()">➕ Nuovo Piatto</button>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.5rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <button class="btn btn-secondary active" onclick="filterCategory('all')">Tutti</button>
+                    <button class="btn btn-secondary" onclick="filterCategory('Antipasto')">Antipasti</button>
+                    <button class="btn btn-secondary" onclick="filterCategory('Primo')">Primi</button>
+                    <button class="btn btn-secondary" onclick="filterCategory('Secondo')">Secondi</button>
+                    <button class="btn btn-secondary" onclick="filterCategory('Contorno')">Contorni</button>
+                    <button class="btn btn-secondary" onclick="filterCategory('Dolce')">Dolci</button>
+                </div>
+
+                <div class="products-grid" id="products-container">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Caricamento prodotti...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: FEEDBACK/RECENSIONI -->
+        <div id="tab-feedback" class="tab-content">
+            <div class="section">
+                <div class="section-title">⭐ Recensioni Clienti</div>
+                
+                <div class="quick-stats" style="margin-bottom: 2rem;">
+                    <div class="stat-card">
+                        <div class="stat-value" id="total-feedback">0</div>
+                        <div class="stat-label">Totale Recensioni</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="avg-rating">0.0</div>
+                        <div class="stat-label">Media ⭐</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="five-stars">0</div>
+                        <div class="stat-label">5 Stelle 🌟</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="four-stars">0</div>
+                        <div class="stat-label">4 Stelle ⭐</div>
+                    </div>
+                </div>
+
+                <div id="feedback-container">
+                    <div class="empty-state">
+                        <div class="empty-icon">⭐</div>
+                        <p>Caricamento recensioni...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 5: RICETTA SETTIMANA -->
+        <div id="tab-ricetta" class="tab-content">
+            <div class="section">
+                <div class="section-title">🌟 Gestisci Ricetta della Settimana</div>
+                
+                <div class="recipe-featured" id="recipe-preview">
+                    <h3 id="recipe-preview-name">Seleziona un piatto</h3>
+                    <p id="recipe-preview-desc">Scegli quale piatto mettere in evidenza nell'app cliente</p>
+                    <div class="recipe-featured-price" id="recipe-preview-price">CHF 0.00</div>
+                </div>
+
+                <div style="margin-top: 2rem;">
+                    <div class="form-group">
+                        <label class="form-label">Seleziona Piatto</label>
+                        <select class="form-select" id="recipe-select" onchange="updateRecipePreview()">
+                            <option value="">-- Scegli un piatto --</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Nome Personalizzato (opzionale)</label>
+                        <input type="text" class="form-input" id="recipe-custom-name" placeholder="Lascia vuoto per usare il nome del piatto">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Descrizione Personalizzata (opzionale)</label>
+                        <textarea class="form-textarea" id="recipe-custom-desc" placeholder="Lascia vuoto per usare la descrizione del piatto"></textarea>
+                    </div>
+
+                    <button class="btn btn-success" style="width: 100%; font-size: 1.05rem; padding: 1rem;" onclick="saveRecipe()">
+                        💾 Pubblica Ricetta della Settimana
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 5: CONFIGURAZIONE -->
+        <div id="tab-config" class="tab-content">
+            <div class="section">
+                <div class="section-title">⚙️ Configurazione Ristorante</div>
+
+                <div class="form-group">
+                    <label class="form-label">Nome Ristorante</label>
+                    <input type="text" class="form-input" id="config-name" value="Ristorante Demo">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Tagline / Sottotitolo</label>
+                    <input type="text" class="form-input" id="config-tagline" value="Cucina Italiana Autentica">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Indirizzo</label>
+                    <input type="text" class="form-input" id="config-address" value="Via Roma 123, Lugano">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Telefono</label>
+                    <input type="text" class="form-input" id="config-phone" value="+41 91 123 4567">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-input" id="config-email" value="info@ristorante.ch">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">WhatsApp</label>
+                    <input type="text" class="form-input" id="config-whatsapp" value="+41791234567">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">URL Logo</label>
+                    <input type="text" class="form-input" id="config-logo" placeholder="https://...">
+                </div>
+
+                <button class="btn btn-success" style="width: 100%; font-size: 1.05rem; padding: 1rem;" onclick="saveConfig()">
+                    💾 Salva Configurazione
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Aggiungi/Modifica Prodotto -->
+    <div class="modal" id="modal-product">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">➕ Nuovo Piatto</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="edit-product-id">
+                
+                <div class="form-group">
+                    <label class="form-label">Nome Piatto *</label>
+                    <input type="text" class="form-input" id="product-nome" placeholder="Es: Spaghetti Carbonara" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Descrizione</label>
+                    <textarea class="form-textarea" id="product-desc" placeholder="Descrizione del piatto..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Prezzo (CHF) *</label>
+                    <input type="number" class="form-input" id="product-prezzo" step="0.50" placeholder="15.50" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Categoria *</label>
+                    <select class="form-select" id="product-categoria" required>
+                        <option value="">-- Seleziona categoria --</option>
+                        <option value="Antipasto">Antipasto</option>
+                        <option value="Primo">Primo</option>
+                        <option value="Secondo">Secondo</option>
+                        <option value="Contorno">Contorno</option>
+                        <option value="Dolce">Dolce</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Giorno</label>
+                    <select class="form-select" id="product-giorno">
+                        <option value="OGGI">Oggi</option>
+                        <option value="LUNEDI">Lunedì</option>
+                        <option value="MARTEDI">Martedì</option>
+                        <option value="MERCOLEDI">Mercoledì</option>
+                        <option value="GIOVEDI">Giovedì</option>
+                        <option value="VENERDI">Venerdì</option>
+                        <option value="TUTTI I GIORNI">Tutti i Giorni</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Disponibilità</label>
+                    <select class="form-select" id="product-disponibile">
+                        <option value="SI">Disponibile</option>
+                        <option value="NO">Non disponibile</option>
+                    </select>
+                </div>
+
+                <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem;">
+                    <button class="btn btn-secondary" onclick="closeModal()" style="flex: 1;">Annulla</button>
+                    <button class="btn btn-success" onclick="saveProduct()" style="flex: 2;">💾 Salva Piatto</button>
+                </div>
+
+                <div id="delete-section" style="display: none; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e2e8f0;">
+                    <button class="btn btn-danger" onclick="deleteProduct()" style="width: 100%;">🗑️ Elimina Piatto</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://script.google.com/macros/s/AKfycbyOT70dKgvHsKZI0sDpG4POwM_Zu-imBT-RthmLWV9dmV9WbJzni--5k-yn457zxllTXA/exec';
+        
+        let products = [];
+        let orders = [];
+        let archivedOrders = [];
+        let isLoading = true;
+        let currentCategoryFilter = 'all';
+        let currentEditId = null;
+
+        const GIORNI = ['OGGI', 'LUNEDI', 'MARTEDI', 'MERCOLEDI', 'GIOVEDI', 'VENERDI', 'TUTTI_I_GIORNI'];
+        
+        
+
+        // --- Date normalization helpers (avoid timezone shifts) ---
+        function dmyFromISO(iso) {
+            // iso: YYYY-MM-DD
+            if (!iso || typeof iso !== 'string') return '';
+            const m = iso.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+            if (!m) return '';
+            return `${m[3]}/${m[2]}/${m[1]}`;
+        }
+        function isoFromDMY(dmy) {
+            // dmy: DD/MM/YYYY (accept D/M/YYYY)
+            if (!dmy || typeof dmy !== 'string') return '';
+            const m = dmy.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+            if (!m) return '';
+            const dd = m[1].padStart(2,'0');
+            const mm = m[2].padStart(2,'0');
+            const yyyy = m[3];
+            return `${yyyy}-${mm}-${dd}`;
+        }
+        function normalizeOrderDateFields(o) {
+            if (!o || typeof o !== 'object') return o;
+            const rawISO = (o.dataISO ?? '').toString().trim();
+            const rawText = (o.dataText ?? '').toString().trim();
+            const raw = (o.data ?? '').toString().trim();
+
+            let iso = '';
+            let dmy = '';
+
+            if (rawISO && /^\d{4}-\d{2}-\d{2}$/.test(rawISO)) {
+                iso = rawISO;
+                dmy = rawText || dmyFromISO(rawISO);
+            } else {
+                // Accept full ISO datetime, keep date part only
+                const isoDate = raw.includes('T') ? raw.split('T')[0] : raw;
+
+                if (/^\d{4}-\d{2}-\d{2}$/.test(isoDate)) {
+                    iso = isoDate;
+                    dmy = dmyFromISO(isoDate);
+                } else if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(rawText || raw)) {
+                    const base = rawText || raw;
+                    dmy = base.split('/').map((v,i)=> i<2 ? v.padStart(2,'0') : v).join('/');
+                    iso = isoFromDMY(dmy);
+                } else {
+                    // unknown format: keep as-is for display, no filtering
+                    dmy = rawText || raw;
+                    iso = '';
+                }
+            }
+
+            o.dataISO = o.dataISO || iso || '';
+            o.dataText = o.dataText || dmy || rawText || raw;
+            return o;
+        }
+const CAT_MAP = {
+            'Antipasto': 'anti',
+            'Primo': 'prim',
+            'Secondo': 'seco',
+            'Contorno': 'cont',
+            'Dolce': 'dolc'
+        };
+
+        const GIORNO_MAP = {
+            'LUNEDI': 'lun',
+            'MARTEDI': 'mar',
+            'MERCOLEDI': 'mer',
+            'GIOVEDI': 'gio',
+            'VENERDI': 'ven'
+        };
+
+        // Init
+        // ✅ AUTO-REFRESH
+        
+// ============================================
+// AUTO REFRESH (5 min) + PAUSA
+// ============================================
+
+let autoRefreshInterval = null;
+let isAutoRefreshEnabled = true;
+const AUTO_REFRESH_MS = 300000;
+
+function updateAutoRefreshButton() {
+  const btn = document.getElementById('toggle-autorefresh');
+  const status = document.getElementById('autorefresh-status');
+  if (status) {
+    status.textContent = isAutoRefreshEnabled ? 'ON' : 'OFF';
+    status.className = 'badge ' + (isAutoRefreshEnabled ? 'bg-success' : 'bg-danger');
+  }
+  if (!btn) return;
+
+  if (isAutoRefreshEnabled) {
+    btn.classList.remove('btn-outline-success');
+    btn.classList.add('btn-outline-danger');
+    btn.innerHTML = '⏸️ Pausa auto refresh';
+    btn.title = 'Metti in pausa l’aggiornamento automatico';
+    btn.setAttribute('aria-pressed', 'true');
+  } else {
+    btn.classList.remove('btn-outline-danger');
+    btn.classList.add('btn-outline-success');
+    btn.innerHTML = '▶️ Riprendi auto refresh';
+    btn.title = 'Riprendi l’aggiornamento automatico (ogni 30s)';
+    btn.setAttribute('aria-pressed', 'false');
+  }
+}
+
+function startAutoRefresh() {
+  isAutoRefreshEnabled = true;
+  if (autoRefreshInterval) clearInterval(autoRefreshInterval);
+  autoRefreshInterval = setInterval(() => {
+    // true = silent refresh (niente toast)
+    loadDataFromAPI(true);
+  }, AUTO_REFRESH_MS);
+
+  updateAutoRefreshButton();
+}
+
+function stopAutoRefresh() {
+  isAutoRefreshEnabled = false;
+  if (autoRefreshInterval) {
+    clearInterval(autoRefreshInterval);
+    autoRefreshInterval = null;
+  }
+  updateAutoRefreshButton();
+}
+
+function toggleAutoRefresh() {
+  if (isAutoRefreshEnabled) {
+    stopAutoRefresh();
+    showToast('Auto refresh in pausa', 'warning');
+  } else {
+    startAutoRefresh();
+    showToast('Auto refresh attivo (ogni 30s)', 'success');
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+            try {
+                updateAutoRefreshButton();
+                updateFilterButtons();
+                updateViewButtons();
+                loadDataFromAPI();
+                startAutoRefresh();
+            } catch (err) {
+                console.error(err);
+            }
+        });
+
+function updateDates() {
+            const today = new Date();
+            const monday = new Date(today);
+            const dayOfWeek = today.getDay();
+            const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+            monday.setDate(today.getDate() + diff);
+
+            document.getElementById('header-date').textContent = 
+                `Settimana del ${monday.toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' })}`;
+
+            ['lun', 'mar', 'mer', 'gio', 'ven'].forEach((day, i) => {
+                const d = new Date(monday);
+                d.setDate(monday.getDate() + i);
+                const elem = document.getElementById(`date-${day}`);
+                if (elem) {
+                    elem.textContent = d.toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit' });
+                }
+            });
+        }
+
+        async function loadDataFromAPI() {
+            try {
+                showLoading(true);
+                
+                // Carica prodotti
+                const prodottiResponse = await fetch(`${API_URL}?action=getProdotti&ts=${Date.now()}`);
+                const prodottiData = await prodottiResponse.json();
+                
+                if (prodottiData.prodotti && Array.isArray(prodottiData.prodotti)) {
+                    products = prodottiData.prodotti;
+                    console.log(`✅ Caricati ${products.length} prodotti`);
+                    // Debug: mostra giorni dei prodotti
+                    products.forEach((p, i) => {
+                        if (i < 3) console.log(`  [${i}] ${p.nome?.it || p.nome}: giorno="${p.giorno}"`);
+                    });
+                    
+                    // ✅ Popola dropdown ricetta
+                    populateRecipeDropdown();
+                } else {
+                    console.warn('⚠️ prodottiData.prodotti non è array:', prodottiData);
+                    products = [];
+                }
+                // Config sempre, anche se prodotti vuoti
+                loadConfigIntoForm();
+                
+                // Carica ordini REALI
+                try {
+                    console.log('🔍 Chiamata API getOrdini...');
+                    const ordiniResponse = await fetch(`${API_URL}?action=getOrdini&ts=${Date.now()}`);
+                    console.log('📡 Response status:', ordiniResponse.status);
+                    const ordiniData = await ordiniResponse.json();
+                    console.log('📦 Dati ricevuti:', ordiniData);
+                    
+                    if (ordiniData.ordini && Array.isArray(ordiniData.ordini)) {
+                        orders = ordiniData.ordini;
+                        orders = orders.map(normalizeOrderDateFields);
+                        console.log(`✅ Caricati ${orders.length} ordini`);
+                        console.log('📋 Primi 3 ordini:', orders.slice(0, 3));
+                    } else {
+                        console.warn('⚠️ ordiniData.ordini non è array:', ordiniData);
+                        orders = [];
+                    }
+                } catch (e) {
+                    console.error('❌ ERRORE caricamento ordini:', e);
+                    orders = [];
+                }
+
+                // Carica archivio
+                try {
+                    const archivioResponse = await fetch(`${API_URL}?action=getArchivio&ts=${Date.now()}`);
+                    const archivioData = await archivioResponse.json();
+                    if (archivioData.ordini && Array.isArray(archivioData.ordini)) {
+                        archivedOrders = archivioData.ordini.map(normalizeOrderDateFields);
+                    } else {
+                        archivedOrders = [];
+                    }
+                } catch (e) {
+                    console.error('❌ ERRORE caricamento archivio:', e);
+                    archivedOrders = [];
+                }
+                
+                isLoading = false;
+                showLoading(false);
+                
+                // Inizializza UI
+                updateStats();
+                renderOrders();
+                renderWeekly();
+                renderProducts();
+                loadFeedback(); // ✅ Carica feedback
+                
+                showToast(`✅ Sistema caricato: ${products.length} prodotti, ${orders.length} ordini`);
+                
+            } catch (error) {
+                console.error('❌ Errore:', error);
+                isLoading = false;
+                showLoading(false);
+                showToast('❌ Errore caricamento dati');
+            }
+        }
+
+        function showLoading(show) {
+            isLoading = show;
+            const containers = ['products-container', 'ordersContainer'];
+            
+            containers.forEach(id => {
+                const container = document.getElementById(id);
+                if (container && show) {
+                    container.innerHTML = `
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            <p>Caricamento dati...</p>
+                        </div>
+                    `;
+                }
+            });
+        }
+
+
+        // ✅ Date helper (evita bug fuso orario con toISOString)
+        function getLocalISODate(date) {
+            // ✅ FIX: Usa timezone Europe/Zurich per evitare -1 giorno
+            if (!date) date = new Date();
+            
+            const parts = date.toLocaleDateString('it-CH', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                timeZone: 'Europe/Zurich'
+            }).split('/');
+            
+            const dd = parts[0];
+            const mm = parts[1];
+            const yyyy = parts[2];
+            
+            return `${yyyy}-${mm}-${dd}`;
+        }
+
+        function updateStats() {
+            const today = getLocalISODate();
+            const tomorrow = getLocalISODate(new Date(Date.now() + 86400000));
+            
+            const todayOrders = orders.filter(o => o.dataISO === today);
+            const tomorrowOrders = orders.filter(o => o.dataISO === tomorrow);
+            const lunchOrders = todayOrders.filter(o => {
+                const hour = parseInt((o.ora || '').split(':')[0]);
+                return hour >= 11 && hour < 15;
+            });
+            const dinnerOrders = todayOrders.filter(o => {
+                const hour = parseInt((o.ora || '').split(':')[0]);
+                return hour >= 18 && hour < 23;
+            });
+            
+            document.getElementById('stat-all').textContent = todayOrders.length;
+            document.getElementById('stat-lunch').textContent = lunchOrders.length;
+            document.getElementById('stat-dinner').textContent = dinnerOrders.length;
+            document.getElementById('stat-tomorrow').textContent = tomorrowOrders.length;
+        }
+
+        
+        function escapeHtml(str) {
+            return String(str ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        let currentFilter = 'oggi';
+        let currentView = 'active';
+
+        function setOrdersView(view) {
+            currentView = (view === 'archived') ? 'archived' : 'active';
+            updateViewButtons();
+            renderOrders();
+        }
+
+        function updateViewButtons() {
+            const btnA = document.getElementById('view-active');
+            const btnR = document.getElementById('view-archived');
+            if (!btnA || !btnR) return;
+
+            const setActive = (btn) => {
+                btn.classList.remove('btn-secondary');
+                btn.classList.add('btn-primary');
+            };
+            const setInactive = (btn) => {
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-secondary');
+            };
+
+            setInactive(btnA);
+            setInactive(btnR);
+
+            if (currentView === 'archived') setActive(btnR);
+            else setActive(btnA);
+        }
+
+        function updateFilterButtons() {
+            const oggi = document.getElementById('filter-oggi');
+            const tutti = document.getElementById('filter-tutti');
+            if (!oggi || !tutti) return;
+            if (currentFilter === 'tutti') {
+                tutti.classList.remove('btn-secondary');
+                tutti.classList.add('btn-success');
+                oggi.classList.remove('btn-success');
+                oggi.classList.add('btn-secondary');
+            } else {
+                oggi.classList.remove('btn-secondary');
+                oggi.classList.add('btn-success');
+                tutti.classList.remove('btn-success');
+                tutti.classList.add('btn-secondary');
+            }
+        }
+
+        function filterOrdersBy(filter) {
+            currentFilter = (filter === 'tutti') ? 'tutti' : 'oggi';
+            updateFilterButtons();
+            renderOrders();
+        }
+
+        function buildApiUrl(action, params = {}) {
+            const url = new URL(API_URL);
+            url.searchParams.set('action', action);
+            Object.entries(params).forEach(([k, v]) => {
+                if (v !== undefined && v !== null && v !== '') url.searchParams.set(k, String(v));
+            });
+            return url.toString();
+        }
+
+        async function apiGet(action, params = {}) {
+            const url = buildApiUrl(action, params);
+            const res = await fetch(url, { method: 'GET' });
+            const text = await res.text();
+            let data;
+            try { data = JSON.parse(text); } catch (_) { data = { ok: false, raw: text }; }
+            if (!res.ok) throw new Error(`HTTP ${res.status}: ${text}`);
+            return data;
+        }
+
+        function renderOrders() {
+            const ordersList = document.getElementById('ordersContainer');
+            const emptyEl = document.getElementById('ordersEmpty');
+            if (!ordersList) return;
+
+            const statoUpper = (o) => String(o?.stato || '').trim().toUpperCase();
+            const today = getLocalISODate(new Date());
+
+            const baseList = (currentView === 'archived') ? (archivedOrders || []) : (orders || []);
+            let filtered = baseList;
+
+            if (currentView !== 'archived') {
+                // Base set: never show archived in active
+                filtered = filtered.filter(o => !o.archiviato);
+                // COMPLETATO viene archiviato subito, quindi non resta in "Attivi"
+                filtered = filtered.filter(o => statoUpper(o) !== 'COMPLETATO');
+            }
+
+            // Date filter (only Oggi / Tutti)
+            if (currentFilter === 'oggi') {
+                filtered = filtered.filter(o => o.dataISO === today);
+            }
+
+            // Sort by date/time
+            filtered.sort((a, b) => {
+                const da = `${a.dataISO || ''} ${a.ora || ''}`.trim();
+                const db = `${b.dataISO || ''} ${b.ora || ''}`.trim();
+                return da.localeCompare(db);
+            });
+
+            // Empty state
+            if (filtered.length === 0) {
+                ordersList.innerHTML = '';
+                if (emptyEl) {
+                    const msg = currentView === 'archived'
+                        ? 'Nessun ordine archiviato con questi filtri.'
+                        : 'Nessun ordine attivo con questi filtri.';
+                    const p = emptyEl.querySelector('p');
+                    if (p) p.textContent = msg;
+                    emptyEl.style.display = 'block';
+                } else {
+                    ordersList.innerHTML = `
+                        <div style="text-align:center; padding:3rem; color:#6b7280;">
+                            <div style="font-size:2rem; margin-bottom:0.75rem;">📭</div>
+                            <div style="font-weight:700; margin-bottom:0.25rem;">Nessun ordine ${currentView === 'archived' ? 'archiviato' : 'attivo'} con questi filtri.</div>
+                            <div style="font-size:0.95rem;">Prova a cambiare filtro o vista.</div>
+                        </div>
+                    `;
+                }
+                return;
+            }
+            if (emptyEl) emptyEl.style.display = 'none';
+
+            // Render cards
+            ordersList.innerHTML = filtered.map(order => {
+                const pagamentoStr = String(order.pagamento || '').toLowerCase();
+                const paid = !!order.pagato || pagamentoStr === 'si' || pagamentoStr === '1' || pagamentoStr === 'pagato_online' || pagamentoStr === 'pagato';
+                const headerBadge = (currentView === 'archived')
+                    ? `<span class="badge badge-secondary">ARCHIVIATO</span>`
+                    : `<span class="badge ${paid ? 'badge-success' : 'badge-warning'}">${paid ? 'PAGATO' : 'DA PAGARE'}</span>`;
+
+                const actionButtons = (currentView === 'archived')
+                    ? ``
+                    : `
+                            <button class="btn ${paid ? 'btn-secondary' : 'btn-success'}" onclick="markAsPaid('${order.id}')">
+                                ${paid ? 'Annulla pagato' : 'Segna pagato'}
+                            </button>
+                            <button class="btn btn-primary" onclick="markAsCompleted('${order.id}')">Completato</button>
+                          `;
+
+                const prods = (() => {
+                    if (Array.isArray(order.prodotti)) return order.prodotti;
+                    if (typeof order.prodotti === 'string' && order.prodotti.trim()) {
+                        try { const v = JSON.parse(order.prodotti); return Array.isArray(v) ? v : []; } catch (_) { return []; }
+                    }
+                    return [];
+                })();
+
+                const productsHtml = (prods).map(p => `
+                    <div style="display:flex; justify-content:space-between; gap:0.75rem;">
+                        <div style="font-weight:600;">${escapeHtml(p.name || p.nome || p.nome_it || '')}</div>
+                        <div style="white-space:nowrap;">${escapeHtml(String((p.quantity ?? p.quantita ?? p.qty ?? p.qta ?? 1)))}×</div>
+                    </div>
+                `).join('');
+
+                const customerName = (order?.cliente && typeof order.cliente === 'object') ? (order.cliente.nome || '') : (order.cliente || '');
+                const customerPhone = (order?.cliente && typeof order.cliente === 'object') ? (order.cliente.telefono || '') : (order.telefono || '');
+                const orderDateText = order.dataText || dmyFromISO(order.dataISO || '') || order.data || '';
+
+                return `
+                    <div class="order-card" id="order-${escapeHtml(String(order.id))}">
+                        <div class="order-header">
+                            <div>
+                                <div class="order-title">#${escapeHtml(String(order.id))} • ${escapeHtml(orderDateText)} ${escapeHtml(order.ora || '')}</div>
+                                <div class="order-subtitle">${escapeHtml(customerName)} • ${escapeHtml(customerPhone)}</div>
+                            </div>
+                            <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+                                ${headerBadge}
+                            </div>
+                        </div>
+
+                        <div class="order-body">
+                            ${productsHtml ? `<div class="order-products">${productsHtml}</div>` : ''}
+                            ${order.note ? `<div class="order-notes"><strong>Note:</strong> ${escapeHtml(order.note)}</div>` : ''}
+                        </div>
+
+                        <div class="order-actions">
+                            ${actionButtons}
+                            <button class="btn btn-secondary" onclick="printOrder('${order.id}')">🖨️ Stampa</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function markAsPaid(orderId) {
+            try {
+                const order = (orders || []).find(o => String(o.id) === String(orderId));
+                if (!order) return;
+
+                const pagamentoStr = String(order.pagamento || '').toLowerCase();
+                const currentlyPaid = !!order.pagato || pagamentoStr === '1' || pagamentoStr === 'si' || pagamentoStr === 'pagato_online' || pagamentoStr === 'pagato';
+                const newPaid = currentlyPaid ? 0 : 1;
+
+                // Keep same status, just toggle paid
+                const stato = order.stato || '';
+                await apiGet('aggiornaStatoOrdine', { id: orderId, stato, pagamento: newPaid });
+
+                order.pagato = (newPaid === 1);
+                order.pagamento = String(newPaid);
+                showToast(newPaid ? 'Pagamento registrato ✅' : 'Pagamento annullato ↩️', 'success');
+                renderOrders();
+            } catch (err) {
+                console.error(err);
+                showToast('Errore nel salvataggio pagamento', 'error');
+            }
+        }
+
+        async function markAsCompleted(orderId) {
+            try {
+                // Pausa auto-refresh per evitare ricarichi durante l'azione
+                const prevAuto = isAutoRefreshEnabled;
+                if (prevAuto) {
+                    stopAutoRefresh();
+                }
+                
+                const r1 = await apiGet('aggiornaStatoOrdine', { id: orderId, stato: 'COMPLETATO' });
+                if (r1 && r1.success === false) throw new Error(r1.error || 'aggiornaStatoOrdine failed');
+                
+                const r2 = await apiGet('archiviaOrdine', { id: orderId });
+                if (r2 && r2.success === false) throw new Error(r2.error || 'archiviaOrdine failed');
+                
+                // Aggiorna UI localmente: rimuovi ordine dalla lista attivi
+                orders = (orders || []).filter(o => String(o.id) !== String(orderId));
+                renderOrders();
+                
+                showToast('Ordine completato e archiviato ✅', 'success');
+                
+                // Ripristina auto-refresh
+                if (prevAuto) startAutoRefresh();
+            } catch (err) {
+                console.error(err);
+                showToast('Errore nel completamento ordine', 'error');
+            }
+        }
+
+        async function archiveOrder(orderId) {
+            try {
+                await apiGet('archiviaOrdine', { id: orderId });
+                showToast('Ordine archiviato 📦', 'success');
+                await loadDataFromAPI();
+            } catch (err) {
+                console.error(err);
+                showToast('Errore nell’archiviazione', 'error');
+            }
+        }
+
+        function printOrder(orderId) {
+            showToast(`🖨️ Stampa ordine #${orderId}...`);
+        }
+
+
+        function switchTab(tab) {
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            
+            const btn = (typeof event !== 'undefined' && event && event.target)
+                ? event.target
+                : document.querySelector(`.nav-tab[onclick*="switchTab('${tab}')"]`);
+            if (btn) btn.classList.add('active');
+            document.getElementById(`tab-${tab}`).classList.add('active');
+        }
+
+        // COMANDE
+        function refreshOrders() {
+            loadDataFromAPI();
+            showToast('🔄 Aggiornamento ordini...');
+        }
+
+        function printOrders() {
+            if (orders.length === 0) {
+                showToast('❌ Nessun ordine da stampare');
+                return;
+            }
+            showToast('🖨️ Preparazione stampa tutti gli ordini...');
+            // TODO: implementare stampa PDF
+        }
+
+        // MENU SETTIMANALE
+        function renderWeekly() {
+            if (products.length === 0) return;
+            
+            // Clear cells
+            Object.values(CAT_MAP).forEach(cat => {
+                Object.values(GIORNO_MAP).forEach(giorno => {
+                    const cell = document.getElementById(`${cat}-${giorno}`);
+                    if (cell) cell.innerHTML = '';
+                });
+            });
+
+            // ✅ Mappa giorni
+            const dayMap = {
+                lun: 'lunedi',
+                mar: 'martedi',
+                mer: 'mercoledi',
+                gio: 'giovedi',
+                ven: 'venerdi'
+            };
+
+            products.forEach(p => {
+                const cat = CAT_MAP[p.categoria];
+                if (!cat) return;
+                
+                if (!p.giorni) return;
+                
+                // Per ogni giorno, se attivo mostra prodotto
+                Object.keys(dayMap).forEach(giornoKey => {
+                    const dayName = dayMap[giornoKey];
+                    if (p.giorni[dayName]) {
+                        addDishToCell(cat, giornoKey, p);
+                    }
+                });
+            });
+        }
+
+        function addDishToCell(cat, giornoKey, p) {
+            const cell = document.getElementById(`${cat}-${giornoKey}`);
+            if (!cell) return;
+            
+            const div = document.createElement('div');
+            div.className = 'dish-mini';
+            
+            const nome = p.nome?.it || p.nome || 'Piatto';
+            const prezzo = parseFloat(p.prezzo || 0).toFixed(2);
+            
+            div.innerHTML = `
+                <div class="dish-mini-name">${nome}</div>
+                <div class="dish-mini-price">CHF ${prezzo}</div>
+            `;
+            cell.appendChild(div);
+        }
+
+        // FEEDBACK/RECENSIONI
+        let feedbackData = [];
+        let feedbackStats = {};
+
+        async function loadFeedback() {
+            try {
+                const response = await fetch(`${API_URL}?action=getFeedback&ts=${Date.now()}`);
+                const data = await response.json();
+                feedbackData = data.feedback || [];
+
+                const statsResponse = await fetch(`${API_URL}?action=getStatsFeedback&ts=${Date.now()}`);
+                const statsData = await statsResponse.json();
+                feedbackStats = statsData;
+
+                renderFeedbackStats();
+                renderFeedback();
+            } catch (error) {
+                console.error('Errore caricamento feedback:', error);
+            }
+        }
+
+        function renderFeedbackStats() {
+            document.getElementById('total-feedback').textContent = feedbackStats.totaleFeedback || 0;
+            document.getElementById('avg-rating').textContent = feedbackStats.mediaRating || '0.0';
+            document.getElementById('five-stars').textContent = feedbackStats.distribuzioneStelle?.[5] || 0;
+            document.getElementById('four-stars').textContent = feedbackStats.distribuzioneStelle?.[4] || 0;
+        }
+
+        function renderFeedback() {
+            const container = document.getElementById('feedback-container');
+
+            if (feedbackData.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">⭐</div>
+                        <p>Nessuna recensione ancora</p>
+                        <p style="font-size: 0.9rem; color: #999;">I clienti possono lasciare recensioni dopo l'ordine</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = feedbackData.slice().reverse().map(f => {
+                const stars = '⭐'.repeat(f.rating);
+                const date = new Date(f.dataCreazione).toLocaleDateString('it-IT');
+
+                return `
+                    <div class="order-card" style="margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                            <div>
+                                <div style="font-weight: 700; font-size: 1.1rem; color: #333; margin-bottom: 0.25rem;">
+                                    ${f.customerName}
+                                </div>
+                                <div style="font-size: 0.85rem; color: #999;">
+                                    ${f.customerEmail} · Ordine #${f.orderId}
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 1.5rem; margin-bottom: 0.25rem;">
+                                    ${stars}
+                                </div>
+                                <div style="font-size: 0.8rem; color: #999;">
+                                    ${date}
+                                </div>
+                            </div>
+                        </div>
+                        ${f.comment ? `
+                            <div style="background: #f7fafc; padding: 1rem; border-radius: 8px; border-left: 4px solid #fbbf24;">
+                                <p style="color: #4a5568; line-height: 1.6; font-size: 0.95rem;">${f.comment}</p>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // PRODOTTI
+        function renderProducts() {
+            const container = document.getElementById('products-container');
+            
+            if (isLoading) return;
+            
+            let filtered = products;
+            if (currentCategoryFilter !== 'all') {
+                filtered = products.filter(p => p.categoria === currentCategoryFilter);
+            }
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📦</div>
+                        <p>Nessun prodotto${currentCategoryFilter !== 'all' ? ' in questa categoria' : ''}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filtered.map((p, index) => {
+                const nome = p.nome?.it || p.nome || 'Prodotto';
+                const desc = p.descrizione?.it || p.descrizione || '';
+                const prezzo = parseFloat(p.prezzo || 0).toFixed(2);
+                const categoria = p.categoria || 'N/A';
+                const disponibile = p.disponibile === true || p.disponibile === 'SI';
+                
+                // ✅ Giorni come oggetto
+                const giorni = p.giorni || {
+                    lunedi: false,
+                    martedi: false,
+                    mercoledi: false,
+                    giovedi: false,
+                    venerdi: false,
+                    sabato: false,
+                    domenica: false
+                };
+                
+                const realIndex = products.indexOf(p);
+                
+                return `
+                    <div class="product-card" onclick="openEditProduct(${realIndex})">
+                        <div class="product-header">
+                            <div class="product-name">${nome}</div>
+                            <div class="product-price">CHF ${prezzo}</div>
+                        </div>
+                        <div class="product-desc">${desc}</div>
+                        <div class="product-meta">
+                            <span class="badge badge-categoria">${categoria}</span>
+                            <span class="badge ${disponibile ? 'badge-disponibile-si' : 'badge-disponibile-no'}">
+                                ${disponibile ? 'Disponibile' : 'Non disponibile'}
+                            </span>
+                        </div>
+                        
+                        <!-- ✅ CHECKBOXES GIORNI -->
+                        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e5e7eb;">
+                            <div style="font-size: 0.75rem; font-weight: 600; color: #64748b; margin-bottom: 0.5rem;">
+                                📅 Disponibilità Settimanale
+                            </div>
+                            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                                <label style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.75rem; cursor: pointer;" onclick="event.stopPropagation();">
+                                    <input type="checkbox" ${giorni.lunedi ? 'checked' : ''} onchange="toggleDay(${realIndex}, 'lunedi', this.checked); event.stopPropagation();" style="cursor: pointer;">
+                                    <span>LUN</span>
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.75rem; cursor: pointer;" onclick="event.stopPropagation();">
+                                    <input type="checkbox" ${giorni.martedi ? 'checked' : ''} onchange="toggleDay(${realIndex}, 'martedi', this.checked); event.stopPropagation();" style="cursor: pointer;">
+                                    <span>MAR</span>
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.75rem; cursor: pointer;" onclick="event.stopPropagation();">
+                                    <input type="checkbox" ${giorni.mercoledi ? 'checked' : ''} onchange="toggleDay(${realIndex}, 'mercoledi', this.checked); event.stopPropagation();" style="cursor: pointer;">
+                                    <span>MER</span>
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.75rem; cursor: pointer;" onclick="event.stopPropagation();">
+                                    <input type="checkbox" ${giorni.giovedi ? 'checked' : ''} onchange="toggleDay(${realIndex}, 'giovedi', this.checked); event.stopPropagation();" style="cursor: pointer;">
+                                    <span>GIO</span>
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.75rem; cursor: pointer;" onclick="event.stopPropagation();">
+                                    <input type="checkbox" ${giorni.venerdi ? 'checked' : ''} onchange="toggleDay(${realIndex}, 'venerdi', this.checked); event.stopPropagation();" style="cursor: pointer;">
+                                    <span>VEN</span>
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.75rem; cursor: pointer;" onclick="event.stopPropagation();">
+                                    <input type="checkbox" ${giorni.sabato ? 'checked' : ''} onchange="toggleDay(${realIndex}, 'sabato', this.checked); event.stopPropagation();" style="cursor: pointer;">
+                                    <span>SAB</span>
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.75rem; cursor: pointer;" onclick="event.stopPropagation();">
+                                    <input type="checkbox" ${giorni.domenica ? 'checked' : ''} onchange="toggleDay(${realIndex}, 'domenica', this.checked); event.stopPropagation();" style="cursor: pointer;">
+                                    <span>DOM</span>
+                                </label>
+                            </div>
+                            <button style="margin-top: 0.5rem; padding: 0.25rem 0.5rem; font-size: 0.7rem; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer;" 
+                                    onclick="event.stopPropagation(); toggleAllDays(${realIndex}, true);">
+                                ✓ Tutti giorni lavorativi
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function swipeDay(index) {
+            const p = products[index];
+            const currentIdx = GIORNI.indexOf(p.giorno || 'OGGI');
+            const nextIdx = (currentIdx + 1) % GIORNI.length;
+            const oldDay = p.giorno;
+            p.giorno = GIORNI[nextIdx];
+            
+            console.log(`🔄 Swipe: ${oldDay} → ${p.giorno}`);
+            
+            // Salva su API
+            updateProductAPI(p);
+            
+            renderProducts();
+            renderWeekly();
+            showToast(`✅ ${p.nome?.it || 'Piatto'} → ${p.giorno}`);
+        }
+
+        // ✅ NUOVO: Toggle singolo giorno
+        async function toggleDay(index, giorno, checked) {
+            const p = products[index];
+            if (!p.giorni) {
+                p.giorni = {
+                    lunedi: false,
+                    martedi: false,
+                    mercoledi: false,
+                    giovedi: false,
+                    venerdi: false,
+                    sabato: false,
+                    domenica: false
+                };
+            }
+            
+            p.giorni[giorno] = checked;
+            
+            console.log(`📅 ${giorno}: ${checked ? 'SI' : 'NO'}`);
+            
+            // Salva su API
+            const success = await updateProductAPI(p);
+            
+            if (success) {
+                renderProducts();
+                renderWeekly();
+                showToast(`✅ ${giorno.toUpperCase()}: ${checked ? 'Attivo' : 'Disattivato'}`);
+            }
+        }
+
+        // ✅ NUOVO: Attiva tutti giorni lavorativi (LUN-VEN)
+        async function toggleAllDays(index, workdaysOnly = true) {
+            const p = products[index];
+            if (!p.giorni) p.giorni = {};
+            
+            p.giorni.lunedi = true;
+            p.giorni.martedi = true;
+            p.giorni.mercoledi = true;
+            p.giorni.giovedi = true;
+            p.giorni.venerdi = true;
+            p.giorni.sabato = workdaysOnly ? false : true;
+            p.giorni.domenica = workdaysOnly ? false : true;
+            
+            const success = await updateProductAPI(p);
+            
+            if (success) {
+                renderProducts();
+                renderWeekly();
+                showToast(`✅ Tutti giorni lavorativi attivati`);
+            }
+        }
+
+        async function changeDayQuick(index, newDay) {
+            const p = products[index];
+            if (!p) return;
+            
+            const oldDay = p.giorno;
+            p.giorno = newDay;
+            
+            // Aggiorna UI immediatamente per feedback visivo
+            renderProducts();
+            renderWeekly();
+            
+            // Salva su API
+            const success = await updateProductAPI(p);
+            
+            if (success) {
+                showToast(`✅ ${p.nome?.it || p.nome || 'Piatto'} → ${newDay}`);
+            } else {
+                // Rollback se fallisce
+                p.giorno = oldDay;
+                renderProducts();
+                renderWeekly();
+            }
+        }
+
+        function filterCategory(cat) {
+            currentCategoryFilter = cat;
+            
+            const btns = event.target.parentElement.querySelectorAll('.btn-secondary');
+            btns.forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            renderProducts();
+        }
+
+        function openAddProduct() {
+            currentEditId = null;
+            document.getElementById('modal-title').textContent = '➕ Nuovo Piatto';
+            document.getElementById('edit-product-id').value = '';
+            document.getElementById('product-nome').value = '';
+            document.getElementById('product-desc').value = '';
+            document.getElementById('product-prezzo').value = '';
+            document.getElementById('product-categoria').value = '';
+            document.getElementById('product-giorno').value = 'OGGI';
+            document.getElementById('product-disponibile').value = 'SI';
+            document.getElementById('delete-section').style.display = 'none';
+            
+            document.getElementById('modal-product').classList.add('active');
+        }
+
+        function openEditProduct(index) {
+            const p = products[index];
+            currentEditId = p.id;
+            
+            document.getElementById('modal-title').textContent = '✏️ Modifica Piatto';
+            document.getElementById('edit-product-id').value = p.id;
+            document.getElementById('product-nome').value = p.nome?.it || p.nome || '';
+            document.getElementById('product-desc').value = p.descrizione?.it || p.descrizione || '';
+            document.getElementById('product-prezzo').value = p.prezzo || '';
+            document.getElementById('product-categoria').value = p.categoria || '';
+            document.getElementById('product-giorno').value = p.giorno || 'OGGI';
+            document.getElementById('product-disponibile').value = p.disponibile ? 'SI' : 'NO';
+            document.getElementById('delete-section').style.display = 'block';
+            
+            document.getElementById('modal-product').classList.add('active');
+        }
+
+        async function saveProduct() {
+            const nome = document.getElementById('product-nome').value.trim();
+            const desc = document.getElementById('product-desc').value.trim();
+            const prezzo = document.getElementById('product-prezzo').value;
+            const categoria = document.getElementById('product-categoria').value;
+            const giorno = document.getElementById('product-giorno').value;
+            const disponibile = document.getElementById('product-disponibile').value;
+
+            if (!nome || !prezzo || !categoria) {
+                showToast('❌ Compila i campi obbligatori');
+                return;
+            }
+
+            try {
+                console.log('📤 Salvataggio prodotto...');
+                
+                const action = currentEditId ? 'modificaProdotto' : 'aggiungiProdotto';
+                
+                const data = {
+                    nome: { it: nome },
+                    descrizione: { it: desc },
+                    prezzo: parseFloat(prezzo),
+                    categoria,
+                    giorno,
+                    disponibile
+                };
+
+                if (currentEditId) {
+                    data.id = currentEditId;
+                }
+
+                console.log('📤 Invio POST:', data);
+                
+                const response = await fetch(`${API_URL}?action=${action}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'text/plain'  // CRITICAL: text/plain evita CORS preflight
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                console.log('✅ Risposta API:', result);
+
+                if (result.success || result.status === 'success') {
+                    closeModal();
+                    showToast(`✅ Piatto ${currentEditId ? 'modificato' : 'aggiunto'} con successo!`);
+                    setTimeout(() => loadDataFromAPI(), 1000);
+                } else {
+                    showToast('❌ Errore: ' + (result.error || result.message || 'Riprova'));
+                }
+            } catch (error) {
+                console.error('❌ Errore:', error);
+                showToast('❌ Errore salvataggio');
+            }
+        }
+
+        async function deleteProduct() {
+            if (!currentEditId) return;
+            
+            if (!confirm('Sei sicuro di voler eliminare questo piatto?')) return;
+
+            try {
+                console.log('📤 Eliminazione prodotto:', currentEditId);
+                
+                const data = { id: currentEditId };
+                console.log('📤 Invio POST:', data);
+                
+                const response = await fetch(`${API_URL}?action=eliminaProdotto`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'text/plain'  // CRITICAL: text/plain evita CORS preflight
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                console.log('✅ Risposta API:', result);
+
+                if (result.success || result.status === 'success') {
+                    closeModal();
+                    showToast('✅ Piatto eliminato');
+                    setTimeout(() => loadDataFromAPI(), 1000);
+                } else {
+                    showToast('❌ Errore eliminazione: ' + (result.error || result.message || 'Riprova'));
+                }
+            } catch (error) {
+                console.error('❌ Errore:', error);
+                showToast('❌ Errore eliminazione');
+            }
+        }
+
+        async function updateProductAPI(product) {
+            try {
+                console.log('📤 Invio modifica:', product);
+                
+                // Preparo dati per POST
+                const data = {
+                    id: product.id,
+                    nome: product.nome,
+                    descrizione: product.descrizione,
+                    prezzo: parseFloat(product.prezzo),
+                    categoria: product.categoria,
+                    disponibile: product.disponibile === true || product.disponibile === 'SI' ? 'SI' : 'NO',
+                    // ✅ NUOVO: Invia giorni
+                    giorni: product.giorni || {
+                        lunedi: false,
+                        martedi: false,
+                        mercoledi: false,
+                        giovedi: false,
+                        venerdi: false,
+                        sabato: false,
+                        domenica: false
+                    }
+                };
+                
+                console.log('📤 Invio POST:', data);
+                
+                const response = await fetch(`${API_URL}?action=modificaProdotto`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'text/plain'  // CRITICAL: text/plain evita CORS preflight
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                console.log('✅ Risposta API:', result);
+                
+                if (result.success || result.status === 'success') {
+                    console.log('✅ Prodotto aggiornato con successo!');
+                    return true;
+                } else {
+                    console.error('❌ Errore API:', result.error || result.message || 'Errore sconosciuto');
+                    showToast('❌ Errore: ' + (result.error || result.message || 'Riprova'));
+                    return false;
+                }
+            } catch (error) {
+                console.error('❌ Errore update:', error);
+                showToast('❌ Errore connessione');
+                return false;
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-product').classList.remove('active');
+        }
+
+        // RICETTA SETTIMANA
+        function populateRecipeDropdown() {
+            const select = document.getElementById('recipe-select');
+            if (!select) return;
+            
+            select.innerHTML = '<option value="">-- Scegli un piatto --</option>';
+            
+            products.forEach((product, index) => {
+                if (product.disponibile) {
+                    const nome = product.nome?.it || product.nome || `Prodotto ${product.id}`;
+                    const option = document.createElement('option');
+                    option.value = index;
+                    option.textContent = `${product.id} - ${nome}`;
+                    select.appendChild(option);
+                }
+            });
+            
+            // Carica ricetta attuale se esiste
+            loadCurrentRecipe();
+        }
+        
+        async function loadCurrentRecipe() {
+            try {
+                const response = await fetch(`${API_URL}?action=getConfig&ts=${Date.now()}`);
+                const result = await response.json();
+                
+                if (result.config && result.config.recipeWeekId) {
+                    const recipeId = parseInt(result.config.recipeWeekId);
+                    const index = products.findIndex(p => p.id === recipeId);
+                    
+                    if (index >= 0) {
+                        const select = document.getElementById('recipe-select');
+                        select.value = index;
+                        updateRecipePreview();
+                    }
+                }
+            } catch (error) {
+                console.error('Errore caricamento ricetta attuale:', error);
+            }
+        }
+        
+        function updateRecipePreview() {
+            const select = document.getElementById('recipe-select');
+            const index = parseInt(select.value);
+            
+            if (isNaN(index) || index < 0 || index >= products.length) {
+                document.getElementById('recipe-preview-name').textContent = 'Seleziona un piatto';
+                document.getElementById('recipe-preview-desc').textContent = 'Scegli quale piatto mettere in evidenza';
+                document.getElementById('recipe-preview-price').textContent = 'CHF 0.00';
+                return;
+            }
+            
+            const p = products[index];
+            const nome = p.nome?.it || p.nome || 'Piatto';
+            const desc = p.descrizione?.it || p.descrizione || '';
+            const prezzo = parseFloat(p.prezzo || 0).toFixed(2);
+            
+            document.getElementById('recipe-preview-name').textContent = nome;
+            document.getElementById('recipe-preview-desc').textContent = desc;
+            document.getElementById('recipe-preview-price').textContent = `CHF ${prezzo}`;
+        }
+
+        async function saveRecipe() {
+            const select = document.getElementById('recipe-select');
+            const index = parseInt(select.value);
+            
+            if (isNaN(index) || index < 0 || index >= products.length) {
+                showToast('❌ Seleziona un piatto');
+                return;
+            }
+            
+            const product = products[index];
+            const recipeId = product.id;
+            
+            console.log(`💾 Salvataggio ricetta: ID ${recipeId}`);
+            
+            try {
+                const response = await fetch(`${API_URL}?action=aggiornaConfig`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'text/plain'},
+                    body: JSON.stringify({
+                        recipeWeekId: recipeId.toString(),
+                        // opzionale: testo per la home dell'app (se vuoi sovrascrivere)
+                        recipeWeekName: (product.nome && product.nome.it) ? product.nome.it : (product.nome || ''),
+                        recipeWeekDesc: (product.descrizione && product.descrizione.it) ? product.descrizione.it : (product.descrizione || '')
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showToast('✅ Ricetta della settimana pubblicata! Gli utenti vedranno il piatto nell\'app.');
+                    console.log('✅ Ricetta salvata con successo');
+                } else {
+                    showToast('❌ Errore: ' + (result.error || 'Salvataggio fallito'));
+                    console.error('❌ Errore salvataggio:', result);
+                }
+            } catch (error) {
+                showToast('❌ Errore di rete: ' + error.message);
+                console.error('❌ Errore network:', error);
+            }
+        }
+
+        // CONFIG
+        function saveConfig() {
+            const getVal = (id) => {
+                const el = document.getElementById(id);
+                return el ? el.value.trim() : '';
+            };
+            const getValRaw = (id) => {
+                const el = document.getElementById(id);
+                return el ? el.value : '';
+            };
+            const payload = {
+      // Public (Index)
+      nomeRistorante: getVal('config-name'),
+      tagline: getVal('config-tagline'),
+      whatsapp: getVal('config-whatsapp'),
+      colorePrimario: getVal('config-primary'),
+      logoUrl: getVal('config-logo'),
+
+      // Admin/ops (opzionali)
+      emailEsercente: getVal('config-email'),
+      telefonoEsercente: getVal('config-phone'),
+      indirizzoEsercente: getVal('config-address'),
+
+      // VIP
+      programmaVIP_ogni: getVal('config-vip-every'),
+      programmaVIP_omaggio: getValRaw('config-vip-product')
+    };
+
+            // Rimuovi chiavi vuote per non sovrascrivere con stringhe vuote
+            Object.keys(payload).forEach(k => {
+                if (payload[k] === '') delete payload[k];
+            });
+
+            fetch(`${API_URL}?action=aggiornaConfig`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify(payload)
+            })
+            .then(r => r.json())
+            .then(result => {
+                if (result && result.success) {
+                    showToast('✅ Config salvata!');
+                    // Ricarica config (così UI è sempre allineata)
+                    loadConfigIntoForm();
+                } else {
+                    showToast('❌ Errore salvataggio config');
+                    console.error('Errore aggiornaConfig:', result);
+                }
+            })
+            .catch(err => {
+                showToast('❌ Errore rete');
+                console.error(err);
+            });
+        }
+
+        // Carica config dal backend dentro il form Configurazione
+        function loadConfigIntoForm() {
+            fetch(`${API_URL}?action=getConfig&ts=${Date.now()}`)
+            .then(r => r.json())
+            .then(result => {
+                const cfg = (result && result.config) ? result.config : {};
+                const setVal = (id, val) => {
+                    const el = document.getElementById(id);
+                    if (el && val !== undefined && val !== null) el.value = val;
+                };
+                setVal('config-name', cfg.nomeRistorante);
+                setVal('config-tagline', cfg.tagline);
+                setVal('config-whatsapp', cfg.whatsapp);
+                setVal('config-primary', cfg.colorePrimario);
+                setVal('config-logo', cfg.logoUrl);
+                setVal('config-email', cfg.emailEsercente);
+                setVal('config-phone', cfg.telefonoEsercente);
+                setVal('config-address', cfg.indirizzoEsercente);
+                setVal('config-vip-every', cfg.programmaVIP_ogni);
+                setVal('config-vip-product', cfg.programmaVIP_omaggio);
+
+                // Se hai anche logoUrl o emailEsercente in futuro, puoi aggiungerli qui.
+            })
+            .catch(err => console.error('Errore loadConfigIntoForm:', err));
+        }
+
+        // TOAST
+        function showToast(msg) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = msg;
+            document.body.appendChild(toast);
+
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 2500);
+        }
+    </script>
+<!-- PATCH v9: Completati tab + fix Completato/Archivia + auto-refresh button state -->
+
+<!-- Completed tab injection removed: handled in main script -->
+
+</body>
+</html>
+
